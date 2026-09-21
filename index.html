@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>財管系排球兄弟姐妹盃｜線上報名</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sea: #0F2E4C;
+    --blue: #1F5FAE;
+    --ball: #F4C21B;
+    --floor: #EEF2F6;
+    --paper: #FFFFFF;
+    --ink: #142233;
+    --muted: #5B6B7C;
+    --rule: #CBD5DF;
+    --danger: #B42318;
+    --ok: #1E7F52;
+    --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    --num: "Barlow Condensed", "Noto Sans TC", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--floor); line-height: 1.7; font-size: 16px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--ball); outline-offset: 2px; }
+
+  /* ---------- Hero：球場俯視圖 ---------- */
+  .hero { background: var(--sea); color: #fff; position: relative; overflow: hidden; }
+  .hero svg.court { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero .wrap { position: relative; padding-top: 44px; padding-bottom: 40px; }
+  .hero .org { font-size: 15px; opacity: .85; margin: 0 0 4px; letter-spacing: .04em; }
+  .hero h1 { font-size: clamp(34px, 8vw, 56px); font-weight: 900; line-height: 1.15; margin: 0 0 28px; letter-spacing: .02em; }
+  .score { display: flex; align-items: flex-end; gap: 22px; flex-wrap: wrap; }
+  .score .date { font-family: var(--num); font-weight: 700; font-size: clamp(64px, 17vw, 108px); line-height: .85; color: var(--ball); }
+  .score .meta { font-size: 15px; line-height: 1.6; padding-bottom: 4px; }
+  .score .meta b { font-weight: 700; display: block; font-size: 17px; }
+
+  /* ---------- 步驟列 ---------- */
+  .steps { display: flex; gap: 0; margin: 0; padding: 0; list-style: none; border-bottom: 1px solid var(--rule); background: var(--paper); }
+  .steps li { flex: 1; text-align: center; padding: 12px 4px; font-size: 14px; color: var(--muted); border-bottom: 3px solid transparent; }
+  .steps li span { font-family: var(--num); font-weight: 700; font-size: 18px; margin-right: 6px; }
+  .steps li.on { color: var(--sea); border-bottom-color: var(--ball); font-weight: 700; }
+
+  main { padding: 28px 0 64px; }
+  h2 { font-size: 22px; font-weight: 900; margin: 36px 0 12px; color: var(--sea); }
+  h2:first-child { margin-top: 0; }
+  p { margin: 0 0 12px; }
+
+  /* 活動資訊 */
+  dl.info { margin: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; }
+  dl.info div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--rule); }
+  dl.info div:first-child { border-top: 0; }
+  dt { color: var(--muted); font-size: 15px; }
+  dd { margin: 0; font-weight: 500; }
+  .fees { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fee { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 18px; }
+  .fee .who { font-size: 15px; color: var(--muted); }
+  .fee .amt { font-family: var(--num); font-weight: 700; font-size: 40px; line-height: 1.1; color: var(--sea); }
+  .fee .amt small { font-family: var(--sans); font-size: 15px; font-weight: 500; margin-left: 4px; color: var(--muted); }
+  ol.rules { margin: 0; padding-left: 1.4em; }
+  ol.rules li { margin-bottom: 8px; }
+  .notice { border-left: 4px solid var(--ball); background: #FFF8DC; padding: 12px 16px; border-radius: 0 6px 6px 0; margin-top: 16px; }
+
+  .agree { display: flex; gap: 10px; align-items: flex-start; margin: 28px 0 16px; cursor: pointer; }
+  .agree input { width: 20px; height: 20px; margin-top: 4px; accent-color: var(--blue); }
+
+  .btn { display: inline-block; border: 0; border-radius: 6px; background: var(--blue); color: #fff; font-weight: 700; padding: 13px 28px; cursor: pointer; font-size: 17px; }
+  .btn:disabled { background: #9AAABB; cursor: not-allowed; }
+  .btn.ghost { background: transparent; color: var(--blue); padding-left: 0; padding-right: 0; }
+  .actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap-reverse; }
+
+  /* 表單 */
+  label.field { display: block; margin-bottom: 14px; }
+  .field > span { display: block; font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  input[type=text], input[type=email], input[type=tel], input[type=number], select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px; background: #fff; min-height: 46px;
+  }
+  input:focus, select:focus { border-color: var(--blue); }
+  .invalid { border-color: var(--danger) !important; background: #FFF6F5 !important; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+  .grade { display: grid; grid-template-columns: 1fr 110px; gap: 10px; }
+  .grade .suffix { position: relative; }
+  .grade .suffix input { padding-right: 34px; }
+  .grade .suffix::after { content: "級"; position: absolute; right: 12px; top: 10px; color: var(--muted); }
+
+  fieldset.member { border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); padding: 16px 18px 4px; margin: 0 0 14px; }
+  fieldset.member legend { font-weight: 900; color: var(--sea); padding: 0 6px; margin-left: -6px; }
+  fieldset.member.lead { border: 2px solid var(--sea); }
+  fieldset.member legend .no { font-family: var(--num); font-size: 20px; margin-right: 4px; }
+
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+  .seg label { position: relative; }
+  .seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .seg span { display: block; padding: 9px 18px; min-width: 64px; text-align: center; background: #fff; border-left: 1px solid var(--rule); }
+  .seg label:first-child span { border-left: 0; }
+  .seg input:checked + span { background: var(--sea); color: #fff; font-weight: 700; }
+  .seg input:focus-visible + span { outline: 3px solid var(--ball); outline-offset: -3px; }
+  .seg.invalid { border-color: var(--danger); }
+  .segrow { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 14px; }
+  .segrow .field > span { margin-bottom: 6px; }
+
+  .contact { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 18px 4px; }
+  .hint { font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+  /* 底部即時統計 */
+  .tally { position: sticky; bottom: 0; background: var(--sea); color: #fff; margin: 24px -20px 0; padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .tally .stat { font-size: 15px; }
+  .tally .stat b { font-family: var(--num); font-size: 24px; margin: 0 2px; }
+  .tally .stat.bad b { color: #FF9B8F; }
+  .tally .stat.good b { color: var(--ball); }
+  .tally .btn { background: var(--ball); color: var(--sea); }
+  .tally .btn:disabled { background: #6F8499; color: #D5DDE6; }
+
+  .tallyMsg { flex-basis: 100%; background: #FFF1EF; color: var(--danger); border-radius: 6px; padding: 8px 12px; font-size: 15px; font-weight: 500; }
+  .errors { background: #FFF1EF; border: 1px solid #F3B8B0; color: var(--danger); border-radius: 6px; padding: 12px 16px; margin: 0 0 20px; white-space: pre-line; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  /* 完成頁 */
+  .done-id { font-family: var(--num); font-weight: 700; font-size: 64px; color: var(--sea); line-height: 1; margin: 8px 0 20px; }
+  ol.next { padding-left: 1.4em; margin: 0; }
+  ol.next li { margin-bottom: 10px; }
+
+  .closed { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 18px; margin-top: 28px; font-weight: 500; }
+  [hidden] { display: none !important; }
+
+  @media (max-width: 560px) {
+    .grid2, .fees { grid-template-columns: 1fr; }
+    dl.info div { grid-template-columns: 80px 1fr; padding: 12px 14px; }
+    .steps li { font-size: 13px; }
+    .steps li span { display: block; margin: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .page { animation: in .25s ease-out; }
+    @keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <svg class="court" viewBox="0 0 720 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#fff" stroke-opacity=".13" stroke-width="3">
+      <rect x="120" y="40" width="720" height="360"/>
+      <line x1="480" y1="40" x2="480" y2="400" stroke-opacity=".3" stroke-width="5"/>
+      <line x1="360" y1="40" x2="360" y2="400"/>
+      <line x1="600" y1="40" x2="600" y2="400"/>
+    </g>
+    <circle cx="640" cy="92" r="30" fill="#F4C21B" fill-opacity=".9"/>
+    <path d="M612 84 q28 6 56 -4 M618 110 q22 -18 44 -40 M640 62 q-6 28 8 60" fill="none" stroke="#0F2E4C" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+  <div class="wrap">
+    <p class="org">國立中山大學財務管理學系</p>
+    <h1>排球兄弟姐妹盃</h1>
+    <div class="score">
+      <div class="date">10.31</div>
+      <div class="meta"><b>2026 年 10 月 31 日（六）</b>13:00～17:00<br>中山大學體育館綜合球場</div>
+    </div>
+  </div>
+</header>
+
+<ol class="steps" id="steps">
+  <li class="on"><span>1</span>活動資訊</li>
+  <li><span>2</span>填寫報名</li>
+  <li><span>3</span>完成報名</li>
+</ol>
+
+<main class="wrap">
+
+  <!-- ===== 第 1 頁：活動資訊 ===== -->
+  <section class="page" id="p1">
+    <h2>活動資訊</h2>
+    <dl class="info">
+      <div><dt>日期</dt><dd>2026 年 10 月 31 日（星期六）</dd></div>
+      <div><dt>時間</dt><dd>13:00～17:00</dd></div>
+      <div><dt>地點</dt><dd>國立中山大學體育館綜合球場</dd></div>
+      <div><dt>參加對象</dt><dd>中山大學財務管理學系在校生與校友</dd></div>
+      <div><dt>報名截止</dt><dd>2026 年 9 月 29 日（二）23:59，或隊伍額滿為止</dd></div>
+    </dl>
+
+    <h2>報名費用</h2>
+    <div class="fees">
+      <div class="fee"><div class="who">校友</div><div class="amt">550<small>元／人</small></div></div>
+      <div class="fee"><div class="who">在校生</div><div class="amt">350<small>元／人</small></div></div>
+    </div>
+    <p class="hint" style="margin-top:8px">費用含場地、裁判、保險、紀念品與飲料點心。全隊費用由主要聯絡人（1 號隊員）統一匯款。</p>
+
+    <h2>報名規則</h2>
+    <ol class="rules">
+      <li>以隊伍為單位報名，每隊 <b>6 位隊員</b>，由 <b>1 號隊員擔任主要聯絡人</b>，代表全隊填寫報名表。</li>
+      <li>每隊至少需有 <b>2 位女生</b>。</li>
+      <li>隊員限財管系在校生（含大學部、研究所）與校友，每人限報名一隊。</li>
+      <li>每位隊員都需填寫身分（校友或在校生）、學制與級別，例如「學士班 106 級」、「碩士班 110 級」。</li>
+      <li>每位隊員都需填寫 Email，送出後系統會自動寄出報名確認信給每一位隊員。主要聯絡人另需填寫手機與 LINE ID。</li>
+      <li>報名完成後，主辦單位會透過 LINE 聯繫主要聯絡人，並提供匯款帳號。</li>
+    </ol>
+    <p class="hint" style="margin-top:12px">您填寫的個人資料僅供本次活動聯繫、分組與辦理保險使用，活動結束後將妥善刪除。</p>
+    <div class="notice">正式賽程與比賽相關規定，將於報名截止後公布。</div>
+
+    <div id="openArea">
+      <label class="agree"><input type="checkbox" id="agree"> <span>我已閱讀以上活動資訊與報名規則</span></label>
+      <button class="btn" id="toForm" disabled>開始填寫報名</button>
+    </div>
+    <div class="closed" id="closedMsg" hidden></div>
+  </section>
+
+  <!-- ===== 第 2 頁：填寫報名 ===== -->
+  <section class="page" id="p2" hidden>
+    <div class="errors" id="errors" role="alert" hidden></div>
+    <form id="form" novalidate>
+      <h2>隊伍名稱</h2>
+      <label class="field"><span>隊伍名稱</span>
+        <input type="text" name="teamName" maxlength="30" placeholder="例如：西子灣殺球隊" required>
+      </label>
+
+      <h2>隊員資料</h2>
+      <p class="hint">共 6 位，至少 2 位女生。1 號隊員為主要聯絡人，請多填手機與 LINE ID。級別請填數字，例如學士班 106 級就填 106。</p>
+      <div id="members"></div>
+      <template id="contactTpl">
+        <div class="grid2 contactFields">
+          <label class="field"><span>手機</span><input type="tel" name="cPhone" maxlength="12" placeholder="0912345678" inputmode="numeric" required></label>
+          <label class="field"><span>LINE ID</span><input type="text" name="cLine" maxlength="30" autocapitalize="off" required>
+            <div class="hint">主辦單位會用這個 LINE ID 加您好友</div></label>
+        </div>
+      </template>
+
+
+      <div class="hp" aria-hidden="true"><label>網站<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <div class="actions">
+        <button type="button" class="btn ghost" id="back">回到活動資訊</button>
+      </div>
+
+      <div class="tally">
+        <div class="stat" id="femaleStat">女生 <b id="femaleCount">0</b>／至少 2 位</div>
+        <div class="stat">應繳 <b id="feeTotal">0</b> 元</div>
+        <button type="submit" class="btn" id="submitBtn">送出報名</button>
+        <div class="tallyMsg" id="tallyMsg" role="status" aria-live="polite" hidden></div>
+      </div>
+    </form>
+  </section>
+
+  <!-- ===== 第 3 頁：完成 ===== -->
+  <section class="page" id="p3" hidden>
+    <h2>報名完成</h2>
+    <p>您的報名編號</p>
+    <div class="done-id" id="doneId">VB-000</div>
+    <p>隊伍「<b id="doneTeam"></b>」，應繳金額共 <b>NT$ <span id="doneFee"></span></b>。</p>
+    <h2>接下來</h2>
+    <ol class="next">
+      <li>系統已寄出確認信到每位隊員的信箱，若沒收到請檢查垃圾郵件匣。</li>
+      <li>主辦單位會透過 LINE 聯繫主要聯絡人（1 號隊員），並提供匯款帳號。</li>
+      <li>正式賽程與比賽相關規定，將於報名截止後公布。</li>
+    </ol>
+  </section>
+</main>
+
+<template id="memberTpl">
+  <fieldset class="member">
+    <legend><span class="no"></span>隊員</legend>
+    <div class="grid2">
+      <label class="field"><span>姓名</span><input type="text" data-k="name" maxlength="20" required></label>
+      <label class="field"><span>Email</span><input type="email" data-k="email" maxlength="100" required></label>
+    </div>
+    <div class="segrow">
+      <div class="field"><span>性別</span>
+        <div class="seg" data-k="gender">
+          <label><input type="radio" value="男"><span>男</span></label>
+          <label><input type="radio" value="女"><span>女</span></label>
+        </div>
+      </div>
+      <div class="field"><span>身分</span>
+        <div class="seg" data-k="identity">
+          <label><input type="radio" value="校友"><span>校友</span></label>
+          <label><input type="radio" value="在校生"><span>在校生</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="field"><span class="gradeLabel">學制與級別</span>
+      <div class="grade">
+        <select data-k="program" required>
+          <option value="">選擇學制</option>
+          <option>學士班</option><option>碩士班</option><option>碩士在職專班</option><option>博士班</option>
+        </select>
+        <div class="suffix"><input type="number" data-k="grade" min="60" max="120" placeholder="106" inputmode="numeric" required></div>
+      </div>
+    </div>
+  </fieldset>
+</template>
+
+<script>
+/* ===== 請把這裡換成 Apps Script「網頁應用程式」的網址（結尾是 /exec） ===== */
+var API_URL = 'https://script.google.com/macros/s/AKfycbx9_uw7fRnd-dmYxicZ_OnoUj5Orq1i96-hTFh8IXbGmxCZhaL9jR-PveYwn8NS8dFg3A/exec';
+
+window.addEventListener('error', function (e) {
+  var el = document.getElementById('errors');
+  if (el) { el.hidden = false; el.textContent = '網頁發生錯誤，請截圖給主辦單位：' + e.message; }
+});
+(function () {
+  var TEAM_SIZE = 6, MIN_FEMALE = 2, FEE = { '校友': 550, '在校生': 350 };
+  var hasBackend = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(API_URL);
+
+  // 呼叫 Apps Script API。POST 使用 text/plain，避免瀏覽器的跨網域預檢（CORS preflight）；
+  // 不帶 cookie，所以 Safari、多個 Google 帳號登入都不受影響。
+  function api(body) {
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 40000);
+    var opts = { method: body ? 'POST' : 'GET', redirect: 'follow', credentials: 'omit' };
+    if (body) { opts.headers = { 'Content-Type': 'text/plain;charset=utf-8' }; opts.body = JSON.stringify(body); }
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(API_URL, opts)
+      .then(function (r) { return r.json(); })
+      .then(function (res) { clearTimeout(timer); if (!res.ok) throw new Error(res.error || '發生未知錯誤。'); return res; })
+      .catch(function (err) {
+        clearTimeout(timer);
+        if (err && err.name === 'AbortError') throw new Error('伺服器超過 40 秒沒有回應，請確認網路後再按一次「送出報名」。');
+        if (err instanceof TypeError) throw new Error('無法連線到報名系統，請確認網路後再試一次。');
+        throw err;
+      });
+  }
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  // 建立 6 位隊員欄位
+  var box = $('#members'), tpl = $('#memberTpl');
+  for (var i = 0; i < TEAM_SIZE; i++) {
+    var node = tpl.content.cloneNode(true);
+    var fs = node.querySelector('fieldset');
+    fs.dataset.idx = i;
+    fs.querySelector('.no').textContent = i + 1;
+    fs.querySelector('legend').lastChild.textContent = ' 號隊員';
+    $$('.seg', fs).forEach(function (seg) {
+      $$('input', seg).forEach(function (r) { r.name = 'm' + i + '_' + seg.dataset.k; });
+    });
+    if (i === 0) {
+      fs.classList.add('lead');
+      fs.querySelector('legend').lastChild.textContent = ' 號隊員（主要聯絡人）';
+      fs.querySelector('.grid2').after($('#contactTpl').content.cloneNode(true));
+    }
+    box.appendChild(node);
+  }
+
+  // 頁面切換
+  function show(n) {
+    ['p1', 'p2', 'p3'].forEach(function (id, idx) { $('#' + id).hidden = idx !== n - 1; });
+    $$('#steps li').forEach(function (li, idx) { li.classList.toggle('on', idx === n - 1); });
+    window.scrollTo(0, 0);
+  }
+  $('#agree').addEventListener('change', function () { $('#toForm').disabled = !this.checked; });
+  $('#toForm').addEventListener('click', function () { show(2); });
+  $('#back').addEventListener('click', function () { show(1); });
+
+  // 報名狀態（截止／額滿）
+  if (hasBackend) {
+    api().then(function (s) {
+      if (!s.open) {
+        $('#openArea').hidden = true;
+        var msg = $('#closedMsg');
+        msg.hidden = false;
+        msg.textContent = s.reason === 'full' ? '報名隊伍已額滿，感謝大家的熱情參與。' : '報名已截止，感謝大家的熱情參與。';
+      }
+    }).catch(function (err) {
+      $('#closedMsg').hidden = false;
+      $('#closedMsg').textContent = '報名系統暫時無法使用：' + errText(err);
+    });
+  }
+
+  // 讀取表單
+  function segVal(fs, k) { var r = $('.seg[data-k="' + k + '"] input:checked', fs); return r ? r.value : ''; }
+  function collect() {
+    var f = $('#form');
+    return {
+      teamName: f.teamName.value.trim(),
+      members: $$('fieldset.member').map(function (fs) {
+        return {
+          name: $('[data-k=name]', fs).value.trim(),
+          email: $('[data-k=email]', fs).value.trim(),
+          gender: segVal(fs, 'gender'),
+          identity: segVal(fs, 'identity'),
+          program: $('[data-k=program]', fs).value,
+          grade: $('[data-k=grade]', fs).value.trim()
+        };
+      }),
+      contact: {
+        phone: f.cPhone.value.replace(/[\s-]/g, ''),
+        lineId: f.cLine.value.trim()
+      },
+      website: f.website.value
+    };
+  }
+
+  // 即時統計：女生人數、應繳金額
+  function tally() {
+    var d = collect();
+    var females = d.members.filter(function (m) { return m.gender === '女'; }).length;
+    var fee = d.members.reduce(function (s, m) { return s + (FEE[m.identity] || 0); }, 0);
+    $('#femaleCount').textContent = females;
+    $('#femaleStat').className = 'stat ' + (females >= MIN_FEMALE ? 'good' : 'bad');
+    $('#feeTotal').textContent = fee.toLocaleString();
+  }
+  $('#form').addEventListener('input', function (e) { e.target.classList.remove('invalid'); tally(); });
+  $('#form').addEventListener('change', function (e) {
+    var fs = e.target.closest('fieldset.member');
+    if (fs && e.target.name && /identity$/.test(e.target.name)) {
+      $('.gradeLabel', fs).textContent = e.target.value === '校友' ? '學制與級別（校友）' : '學制與級別（在校生）';
+    }
+    if (e.target.classList.contains('invalid') || (e.target.closest('.seg') || {}).classList) {
+      e.target.classList.remove('invalid');
+      var seg = e.target.closest('.seg'); if (seg) seg.classList.remove('invalid');
+    }
+    tally();
+  });
+  tally();
+
+  // 前端驗證（伺服器端會再驗一次）
+  var emailRe = /^[^\s@<>()"',;]+@[^\s@<>()"',;]+\.[A-Za-z]{2,}$/;
+  function validate(d) {
+    var errs = [], f = $('#form');
+    $$('.invalid').forEach(function (el) { el.classList.remove('invalid'); });
+    function bad(el, msg) { el.classList.add('invalid'); errs.push(msg); }
+
+    if (!d.teamName) bad(f.teamName, '請填寫隊伍名稱。');
+    var seen = {};
+    $$('fieldset.member').forEach(function (fs, i) {
+      var m = d.members[i], L = (i + 1) + ' 號隊員：';
+      if (!m.name) bad($('[data-k=name]', fs), L + '請填寫姓名。');
+      if (!emailRe.test(m.email)) bad($('[data-k=email]', fs), L + 'Email 格式不正確。');
+      else if (seen[m.email.toLowerCase()]) bad($('[data-k=email]', fs), L + 'Email 與其他隊員重複。');
+      seen[m.email.toLowerCase()] = 1;
+      if (!m.gender) bad($('.seg[data-k=gender]', fs), L + '請選擇性別。');
+      if (!m.identity) bad($('.seg[data-k=identity]', fs), L + '請選擇校友或在校生。');
+      if (!m.program) bad($('[data-k=program]', fs), L + '請選擇學制。');
+      var g = parseInt(m.grade, 10);
+      if (!(g >= 60 && g <= 120)) bad($('[data-k=grade]', fs), L + '級別請填數字，例如 106。');
+    });
+    var females = d.members.filter(function (m) { return m.gender === '女'; }).length;
+    if (females < MIN_FEMALE) errs.push('每隊至少需要 2 位女生，目前 ' + females + ' 位。');
+    if (!/^09\d{8}$/.test(d.contact.phone)) bad(f.cPhone, '1 號隊員：手機請填 09 開頭的 10 碼號碼。');
+    if (!/^[A-Za-z0-9._@-]{1,30}$/.test(d.contact.lineId)) bad(f.cLine, '1 號隊員：LINE ID 只能包含英文、數字與 . _ - @。');
+    return errs;
+  }
+
+  function errText(err) { return String((err && err.message) || err).replace(/^Error:\s*/, ''); }
+  function showErrors(list) {
+    var msg = $('#tallyMsg');
+    msg.hidden = !list.length;
+    msg.textContent = list.length === 1 ? list[0] : (list.length ? '還有 ' + list.length + ' 項需要修正：' + list[0] : '');
+    var el = $('#errors');
+    el.hidden = !list.length;
+    var shown = list.slice(0, 5);
+    if (list.length > 5) shown.push('另有 ' + (list.length - 5) + ' 項未完成，已用紅框標示在下方欄位。');
+    el.textContent = list.length ? '請修正以下項目：\n' + shown.join('\n') : '';
+    // 手機（尤其 iPhone）在 Apps Script 的內嵌框架中無法用程式捲動頁面，
+    // 改為讓第一個有問題的欄位取得焦點，瀏覽器會自動捲到該欄位。
+    var first = $('.invalid');
+    if (first) {
+      var target = first.matches('input, select') ? first : first.querySelector('input');
+      if (target) { try { target.focus({ preventScroll: false }); } catch (e) { target.focus(); } }
+      first.scrollIntoView({ block: 'center' });
+    }
+  }
+
+  $('#form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var d = collect(), errs = validate(d);
+    showErrors(errs);
+    if (errs.length) return;
+
+    var btn = $('#submitBtn');
+    btn.disabled = true; btn.textContent = '送出中…';
+    var done = function (res) {
+      $('#doneId').textContent = res.id;
+      $('#doneTeam').textContent = d.teamName;
+      $('#doneFee').textContent = Number(res.fee).toLocaleString();
+      show(3);
+    };
+    var fail = function (err) {
+      btn.disabled = false; btn.textContent = '送出報名';
+      showErrors(errText(err).split('\n'));
+    };
+    if (hasBackend) {
+      api(d).then(done, fail);
+    } else {
+      // 預覽模式：API_URL 還沒填時，模擬成功（不會真的寫入資料）
+      setTimeout(function () {
+        done({ id: 'VB-001', fee: d.members.reduce(function (s, m) { return s + FEE[m.identity]; }, 0) });
+      }, 600);
+    }
+  });
+})();
+</script>
+</body>
+</html>
