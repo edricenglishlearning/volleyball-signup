@@ -402,7 +402,7 @@ window.addEventListener('error', function (e) {
     $('#femaleStat').className = 'stat ' + (females >= MIN_FEMALE ? 'good' : 'bad');
     $('#feeTotal').textContent = fee.toLocaleString();
   }
-  $('#form').addEventListener('input', function (e) { e.target.classList.remove('invalid'); tally(); });
+  $('#form').addEventListener('input', function (e) { e.target.classList.remove('invalid'); tally(); refreshErrors(); });
   $('#form').addEventListener('change', function (e) {
     var fs = e.target.closest('fieldset.member');
     if (fs && e.target.name && /identity$/.test(e.target.name)) {
@@ -413,7 +413,9 @@ window.addEventListener('error', function (e) {
       var seg = e.target.closest('.seg'); if (seg) seg.classList.remove('invalid');
     }
     tally();
+    refreshErrors();
   });
+  $('#form').addEventListener('focusout', function () { refreshErrors(); });
   tally();
 
   // 前端驗證（伺服器端會再驗一次）
@@ -445,16 +447,21 @@ window.addEventListener('error', function (e) {
   }
 
   function errText(err) { return String((err && err.message) || err).replace(/^Error:\s*/, ''); }
+  // 按過一次「送出報名」之後，每次修改欄位都重新驗證，讓錯誤訊息即時更新（不跳焦點、不捲動）
+  var attempted = false;
+  function refreshErrors() {
+    if (!attempted) return;
+    var errs = validate(collect());
+    var a = document.activeElement;
+    if (a && a.classList) {
+      a.classList.remove('invalid');
+      var seg = a.closest && a.closest('.seg'); if (seg) seg.classList.remove('invalid');
+    }
+    renderErrors(errs);
+  }
   function showErrors(list) {
-    var msg = $('#tallyMsg');
-    msg.hidden = !list.length;
-    msg.textContent = list.length === 1 ? list[0] : (list.length ? '還有 ' + list.length + ' 項需要修正：' + list[0] : '');
-    var el = $('#errors');
-    el.hidden = !list.length;
-    var shown = list.slice(0, 5);
-    if (list.length > 5) shown.push('另有 ' + (list.length - 5) + ' 項未完成，已用紅框標示在下方欄位。');
-    el.textContent = list.length ? '請修正以下項目：\n' + shown.join('\n') : '';
-    // 手機（尤其 iPhone）在 Apps Script 的內嵌框架中無法用程式捲動頁面，
+    renderErrors(list);
+    // 手機（尤其 iPhone）無法可靠地用程式捲動頁面，
     // 改為讓第一個有問題的欄位取得焦點，瀏覽器會自動捲到該欄位。
     var first = $('.invalid');
     if (first) {
@@ -463,9 +470,20 @@ window.addEventListener('error', function (e) {
       first.scrollIntoView({ block: 'center' });
     }
   }
+  function renderErrors(list) {
+    var msg = $('#tallyMsg');
+    msg.hidden = !list.length;
+    msg.textContent = list.length === 1 ? list[0] : (list.length ? '還有 ' + list.length + ' 項需要修正：' + list[0] : '');
+    var el = $('#errors');
+    el.hidden = !list.length;
+    var shown = list.slice(0, 5);
+    if (list.length > 5) shown.push('另有 ' + (list.length - 5) + ' 項未完成，已用紅框標示在下方欄位。');
+    el.textContent = list.length ? '請修正以下項目：\n' + shown.join('\n') : '';
+  }
 
   $('#form').addEventListener('submit', function (e) {
     e.preventDefault();
+    attempted = true;
     var d = collect(), errs = validate(d);
     showErrors(errs);
     if (errs.length) return;
